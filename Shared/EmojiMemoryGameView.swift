@@ -22,7 +22,8 @@ struct EmojiMemoryGameView: View {
             NewGameButtonView(viewModel: viewModel)
             }
         .padding()
-        .foregroundColor(Color.orange)
+        .foregroundColor(viewModel.themeColor)
+        
     }
 }
 
@@ -39,7 +40,7 @@ struct NewGameButtonView: View {
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .font(.subheadline)
                 .padding()
-                .background(Color.orange)
+                .background(Color.gray)
                 .foregroundColor(Color.white)
                 .cornerRadius(25)
         })
