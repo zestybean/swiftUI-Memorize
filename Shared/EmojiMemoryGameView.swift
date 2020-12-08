@@ -9,7 +9,11 @@ import SwiftUI
 
 //View
 struct EmojiMemoryGameView: View {
-    @ObservedObject var viewModel: EmojiMemoryGame
+    @ObservedObject var viewModel: EmojiMemoryGame = EmojiMemoryGame()
+    
+    init() {
+        self.viewModel.reset()
+    }
     
     var body: some View {
         VStack {
@@ -19,31 +23,27 @@ struct EmojiMemoryGameView: View {
                     }
                     .padding(5)
                 }
-            NewGameButtonView(viewModel: viewModel)
+            HStack(spacing: 45) {
+                Text("Score: \(viewModel.score)")
+                Button(action: {
+                        viewModel.reset()
+                       })  {
+                        Text("New Game")
+                            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                            .font(.subheadline)
+                }
+                .padding()
+                .foregroundColor(.white)
+                .background(viewModel.themeColor)
+                .cornerRadius(10)
+                Text("Time: ")
+            }
+            
             }
         .padding()
         .foregroundColor(viewModel.themeColor)
         
-    }
-}
-
-struct NewGameButtonView: View {
-    
-    var viewModel: EmojiMemoryGame
-    //Get the ref to the view model
-    
-    var body: some View {
-        Button(action: {
-                viewModel.newGame()
-               }, label: {
-            Text("New Game")
-                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                .font(.subheadline)
-                .padding()
-                .background(Color.gray)
-                .foregroundColor(Color.white)
-                .cornerRadius(25)
-        })
+        
     }
 }
 
@@ -75,17 +75,17 @@ struct CardView: View {
     
     // MARK: - Drawing Constants
     
-    let cornerRadius: CGFloat = 10.0
-    let edgeLineWidth: CGFloat = 3.0
-    let fontScaleFactor: CGFloat = 0.75
+    private let cornerRadius: CGFloat = 10.0
+    private let edgeLineWidth: CGFloat = 3.0
+    private let fontScaleFactor: CGFloat = 0.75
     
-    func fontSize(for size: CGSize) -> CGFloat {
+    private func fontSize(for size: CGSize) -> CGFloat {
         min(size.width, size.height) * fontScaleFactor
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        EmojiMemoryGameView(viewModel: EmojiMemoryGame())
+        EmojiMemoryGameView()
     }
 }

@@ -10,10 +10,11 @@ import Foundation
 //Swift uses declarative programming and moves away from the imperative style.
 
 //Model
-struct MemoryGame<CardContent> where CardContent: Equatable{
-    var cards: Array<Card>
-
-    var indexOfTheOneAndOnlyFaceUpCard: Int? {
+struct MemoryGame<CardContent> where CardContent: Equatable {
+    private(set) var cards: Array<Card>
+    private(set) var score: Int
+    
+    private var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get { cards.indices.filter { index in cards[index].isFaceUp }.only
     }
         set {
@@ -28,9 +29,15 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         if let chosenIndex: Int = cards.firstIndex(matching: card), !cards[chosenIndex].isFaceUp, !cards[chosenIndex].isMatched {
             if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
                 if cards[chosenIndex].content == cards[potentialMatchIndex].content {
+                    score += 2
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
+                } else {
+                    if(score > 0) {
+                        score -= 1
+                    }
                 }
+                
                 self.cards[chosenIndex].isFaceUp = true
             } else {
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex
@@ -41,6 +48,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
 
     
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
+        score = 0
         cards = Array<Card>()
         for pairIndex in 0..<numberOfPairsOfCards {
             let content = cardContentFactory(pairIndex)

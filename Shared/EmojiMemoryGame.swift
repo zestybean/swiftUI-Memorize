@@ -11,7 +11,7 @@ import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
     var theme: Theme
-    var themeColor: Color
+    var themeColor: Color = .orange
     
     
     init() {
@@ -22,7 +22,7 @@ class EmojiMemoryGame: ObservableObject {
     //Published calls objectWillChange.send() kind of like provider redraw subscribers
     @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame(emojis: ["🥲","🥲","🥲","🥲","🥲","🥲"])
   
-    static func createMemoryGame(emojis: Array<String>) -> MemoryGame<String> {
+    private static func createMemoryGame(emojis: Array<String>) -> MemoryGame<String> {
         return MemoryGame<String>(numberOfPairsOfCards: emojis.count) {
             pairIndex in
             return emojis[pairIndex]
@@ -35,13 +35,17 @@ class EmojiMemoryGame: ObservableObject {
         return model.cards
     }
     
+    var score: Int {
+        return model.score
+    }
+    
     
     //MARK: - Intent(s)
     func choose(card: MemoryGame<String>.Card) {
         model.choose(card: card)
     }
      
-    func newGame() {
+    func reset() {
         self.theme = Theme()
         self.themeColor = theme.themeColor
         model = EmojiMemoryGame.createMemoryGame(emojis: theme.themeEmojis)
