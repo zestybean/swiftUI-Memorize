@@ -19,27 +19,35 @@ struct EmojiMemoryGameView: View {
         VStack {
             Grid(viewModel.cards) { card in
                     CardView(card: card).onTapGesture {
-                        viewModel.choose(card: card)
+                        withAnimation(.linear(duration: 1)){
+                            viewModel.choose(card: card)
+                        }
+                        
                     }
                     .padding(5)
                 }
-            HStack(spacing: 45) {
+            HStack(spacing: 30) {
                 Text("Score: \(viewModel.score)")
                 Button(action: {
+                    withAnimation(.easeInOut) {
                         viewModel.reset()
+                    }
+                       
                        })  {
                         Text("New Game")
-                            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                            .fontWeight(.bold)
                             .font(.subheadline)
                 }
                 .padding()
                 .foregroundColor(.white)
                 .background(viewModel.themeColor)
                 .cornerRadius(10)
-                Text("Time: ")
+                Text("Time: 10")
             }
+            .padding(5)
             
             }
+        
         .padding()
         .foregroundColor(viewModel.themeColor)
         
@@ -57,28 +65,28 @@ struct CardView: View {
         }
     }
     
+    @ViewBuilder
     func body(for size: CGSize) -> some View {
         //Media Query size?
+        if card.isFaceUp || !card.isMatched {
             ZStack {
-                if card.isFaceUp {
-                    RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white)
-                    RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth)
-                    Text(card.content)
-                } else {
-                    if !card.isMatched {
-                        RoundedRectangle(cornerRadius: cornerRadius).fill()
-                    }
-                }
+                Pie(startAngle: Angle.degrees(0-90), endAngle: Angle.degrees(110-90), clockWise: true)
+                    .padding(5)
+                    .opacity(0.4)
+                Text(card.content)
+                    .font(Font.system(size: fontSize(for: size)))
+                    .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
+                    .animation(card.isMatched ? Animation.linear(duration: 1).repeatForever(autoreverses: false): .default)
             }
-            .font(Font.system(size: fontSize(for: size)))
+            .cardify(isFaceUp: card.isFaceUp)
+            .transition(AnyTransition.scale)
+            
+        }
     }
     
     // MARK: - Drawing Constants
-    
-    private let cornerRadius: CGFloat = 10.0
-    private let edgeLineWidth: CGFloat = 3.0
-    private let fontScaleFactor: CGFloat = 0.75
-    
+    private let fontScaleFactor: CGFloat = 0.65
+  
     private func fontSize(for size: CGSize) -> CGFloat {
         min(size.width, size.height) * fontScaleFactor
     }
